@@ -39,7 +39,7 @@ public class Main {
             JSONObject jsonResponse = new JSONObject(response.body().string());
 
             // Finally, lets do the conversation :)
-            double exchangeRate = jsonResponse.getJSONObject("rates").getDouble(targetCurrency);
+            double exchangeRate = jsonResponse.getJSONObject("conversion_rates").getDouble(targetCurrency);
 
         }
         catch (Exception error) {
