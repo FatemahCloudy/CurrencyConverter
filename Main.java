@@ -32,15 +32,29 @@ public class Main {
 
             // Making Http Requests
             Request request = new Request.Builder()
-                    .url("https://v6.exchangerate-api.com/v6/" + apiKey).build();
+                    .url("https://v6.exchangerate-api.com/v6/" + apiKey + "/latest/" + baseCurrency).build();
 
-            // Creat json response
+            // Excute the request and parse the json response
             Response response = client.newCall(request).execute();
-            JSONObject jsonResponse = new JSONObject(response.body().string());
+            String responseBody = response.body().string(); //read the entire response
 
-            // Finally, lets do the conversation :)
-            double exchangeRate = jsonResponse.getJSONObject("conversion_rates").getDouble(targetCurrency);
+            //check if the response is valid
+            if (responseBody.startsWith("{")) {
 
+                JSONObject jsonResponse = new JSONObject(responseBody);
+
+                // Extract the exchange rate
+                double exchangeRate = jsonResponse.getJSONObject("conversion_rates")
+                        .getDouble(targetCurrency);
+
+                // Finally, lets do the conversation :)
+                double convertedAmount = amountToConvert * exchangeRate;
+
+                //Print the results
+                System.out.println("The exchange rate is: " + exchangeRate);
+                System.out.printf("The converted amount is %.2f %S", convertedAmount, targetCurrency);
+
+            } else System.out.println("Error");
         }
         catch (Exception error) {
             System.err.println("Error fetching exchange rates: " + error.getMessage());
